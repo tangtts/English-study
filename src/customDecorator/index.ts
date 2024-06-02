@@ -1,4 +1,3 @@
-import { User } from './../user/entities/user.entity';
 import { ExecutionContext, SetMetadata, applyDecorators, createParamDecorator } from '@nestjs/common';
 import { IsEmpty, IsString,IsNotEmpty, ValidationOptions, registerDecorator, ValidationArguments, notEquals } from 'class-validator';
 

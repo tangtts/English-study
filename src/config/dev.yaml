@@ -1,10 +1,10 @@
 
 MYSQL:
-  DATABASE: accounting
+  DATABASE: english
   PORT: 3306
-  HOST: rm-cn-x0r3mjikh0005e0o.rwlb.rds.aliyuncs.com
+  HOST: 127.0.0.1
   USERNAME: root
-  PASSWORD: 1413qqgmtskABC
+  PASSWORD: "123456"
   LOG_ON: false
 
 REDIS:
@@ -18,7 +18,7 @@ REDIS:
 JWT:
   SECRET: tang
   ACCESS_TOKEN_EXPIRES_TIME: 7d
-  REFRESH_TOKEN_EXPIRES_TIME: 7d
+  REFRESH_TOKEN_EXPIRES_TIME:  7d
 
 LOG:
   ON: true

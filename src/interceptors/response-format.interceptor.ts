@@ -40,7 +40,6 @@ export class ResponseFormatInterceptorInterceptor implements NestInterceptor {
             message: "error",
           };
         }
-        
       })
     );
   }

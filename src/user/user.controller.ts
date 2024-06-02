@@ -1,84 +1,71 @@
-import { RedisService } from "./../redis/redis.service";
-import { GenCaptchaService } from "src/toolsServer/genCaptcha.service";
 import {
   Controller,
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
-  Response,
-  Res,
+  Inject,
+  Query,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { LoginUserDto } from "./dto/login-user.dto";
+import { CreateItemDto } from "./dto/CreateItem.dto";
 import { PublicApi, RequireLogin, UserInfo } from "src/customDecorator";
-import { ChangeUserPasswordDto } from "./dto/change-userPassword.dto";
 import { ApiBody, ApiOperation, ApiProperty, ApiTags } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { Config } from "../config/configType";
+import { TranslateItemDto } from "./dto/TranslateItem.dto";
+import { SearchItemDto } from "./dto/SearchItem.dto";
 
-@ApiTags("用户模块")
-@Controller("user")
+@ApiTags("模块")
+@Controller("/")
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly genCaptchaService: GenCaptchaService,
-    private readonly redisService: RedisService,
-    private  configService:ConfigService<Config>
-  ) {}
+  @Inject()
+  private readonly userService: UserService;
+  @Inject()
+  private configService: ConfigService<Config>;
 
-  @ApiOperation({ summary: '注册' })
+  @ApiOperation({ summary: "翻译" }) 
+  @ApiBody({ type: CreateItemDto })
   @PublicApi()
-  @Post("register")
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @Post("translate")
+  async translate(@Body() translateItemDto: TranslateItemDto) {
+    return this.userService.translate(translateItemDto);
   }
 
-  @ApiOperation({ summary: '登录' })
+  @ApiOperation({ summary: "新增" })
+  @ApiBody({ type: CreateItemDto })
+  @Post("add")
   @PublicApi()
-  @Post("login")
-  login(@Body() loginUserDto: LoginUserDto) {
-    return this.userService.login(loginUserDto);
+  async add(@Body() createItemDto: CreateItemDto) {
+    return this.userService.add(createItemDto);
   }
 
-  @ApiOperation({ summary: '生成验证码' })
-  @Get("capcha")
+  @ApiOperation({ summary: "列表" })
+  @ApiBody({ type: SearchItemDto })
+  @Post("list")
   @PublicApi()
-  createCapcha(@Res() res) {
-    let { text, data } = this.genCaptchaService.captcha();
-    const prefix = this.configService.get("REDIS.REGISTER_CODE","registerCode",{infer:true});
-    
-    this.redisService.set(
-      `${prefix}:${text.toLocaleLowerCase()}`,
-      text.toLocaleLowerCase(),
-      1000
-    );
-    res.type("image/svg+xml");
-    res.send(data);
+  async list(@Body() searchItemDto: SearchItemDto) {
+    return this.userService.getListBySearch(searchItemDto);
   }
 
-  @ApiOperation({ summary: '修改密码' })
-  @Post("changePassword")
-  changePassword(
-    @UserInfo("uid") uid,
-    @Body() changeUserPasswordDto: ChangeUserPasswordDto
-  ) {
-    return this.userService.changeUserPassword(uid, changeUserPasswordDto);
+  @ApiOperation({ summary: "查询" })
+  @PublicApi()
+  @Post("search")
+  async get(@Body("word") word) {
+    return await this.userService.search(word);
   }
 
-  @ApiOperation({ summary: '用户详细信息' })
+  @ApiOperation({ summary: "详情" })
+  @PublicApi()
   @Get("detail")
-  userDetail(@UserInfo("uid") uid) {
-    return this.userService.getUserDetail(uid);
+  async detail(@Query("id", ParseIntPipe) id) {
+    return await this.userService.detail(id);
   }
 
-  @ApiOperation({ summary: '更新用户信息' })
-  @Post("update")
-  updateUser(@UserInfo("uid") uid,@Body() updateUserDto:UpdateUserDto) {
-    return this.userService.updateUser(uid,updateUserDto);
+  @ApiOperation({ summary: "全部a-z" })
+  @PublicApi()
+  @Get("all")
+  async all() {
+    return await this.userService.getAll();
   }
 }
