@@ -6,6 +6,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { WordPage } from './components/wordPage.tsx';
 import { Index } from './components/index.tsx';
 import { ConfigProvider } from 'antd';
+import { AllByLetter } from './components/allByLetter';
 
 const router = createBrowserRouter([
   {
@@ -17,13 +18,18 @@ const router = createBrowserRouter([
         element: <Index />
       },
       {
-        path: "/wordPage/:word",
+        path: "/letterPage",
+        element: <AllByLetter/>
+      },
+      {
+        path: "/wordPage",
         element: <WordPage />,
       },
     ]
   }
 ]);
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const root = document.getElementById('root')!;
+ReactDOM.createRoot(root).render(
   <ConfigProvider theme={{
     token: {
       fontSize: 16,
