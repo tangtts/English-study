@@ -44,6 +44,7 @@
     "rxjs": "^7.2.0",
     "svg-captcha": "^1.4.0",
     "tencentcloud-sdk-nodejs-common": "^4.0.866",
+    "tencentcloud-sdk-nodejs-tmt": "^4.0.864",
     "typeorm": "^0.3.17",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^5.0.0"

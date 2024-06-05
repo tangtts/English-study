@@ -15,12 +15,13 @@ export class EnglistItemEntity {
   id: number;
 
   @Column({
-    unique: true,
     comment: "源文件",
   })
   sourceText: string;
 
-  @Column()
+  @Column({
+    comment: "翻译文本",
+  })
   transformText: string;
 
   @Column({type: "simple-array", comment: "例子" })

@@ -18,7 +18,7 @@ export class TranslateItemDto {
   })
   @IsOptional()
   @IsEnum(["zh", "en"])
-  sourceLanguage: string = "zh";
+  sourceLanguage: string = "en";
 
   @ApiProperty({
     example: "en",
@@ -27,5 +27,5 @@ export class TranslateItemDto {
   })
   @IsOptional()
   @IsEnum(["zh", "en"])
-  target: string = "en";
+  target: string = "zh";
 }

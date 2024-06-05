@@ -8,10 +8,22 @@ import { encryptByMD5 } from "src/utils";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { Config } from "../config/configType";
-import * as tencentcloud from "tencentcloud-sdk-nodejs-common";
-import { CommonClient } from "tencentcloud-sdk-nodejs-common";
+import * as tencentcloud from "tencentcloud-sdk-nodejs-tmt";
 import { TranslateItemDto } from "./dto/TranslateItem.dto";
 import { SearchItemDto } from "./dto/SearchItem.dto";
+const TmtClient = tencentcloud.tmt.v20180321.Client;
+const clientConfig = {
+  credential: {
+    secretId: process.env.TENCENTCLOUD_SECRETID,
+    secretKey: process.env.TENCENTCLOUD_SECRETKEY,
+  },
+  region: "ap-beijing",
+  profile: {
+    httpProfile: {
+      endpoint: "tmt.tencentcloudapi.com",
+    },
+  },
+};
 
 @Injectable()
 export class UserService {
@@ -22,20 +34,33 @@ export class UserService {
   @Inject()
   private configService: ConfigService<Config>;
 
-  client: CommonClient = null;
-
-  async translate(translateItemDto: TranslateItemDto) {
-    let r = await this.client.request("TextTranslate", {
-      SourceText: translateItemDto.sourceText,
-      Source: translateItemDto.sourceLanguage || "zh",
-      Target: translateItemDto.target || "en",
-      ProjectId: 0,
-    });
-    return r.TargetText;
+  private client: any;
+  constructor() {
+    this.client = new TmtClient(clientConfig);
   }
 
-  async add(createItemDto: CreateItemDto) {
-    return await this.englishRepository.save(createItemDto);
+  async translate(translateItemDto: TranslateItemDto) {
+    let r1 = await this.client.TextTranslate({
+      SourceText: translateItemDto.sourceText,
+      Source: translateItemDto.sourceLanguage || "en",
+      Target: translateItemDto.target || "zh",
+      ProjectId: 0,
+    })
+    return r1.TargetText;
+  }
+
+  async addOrUpdate(createItemDto: CreateItemDto) {
+    if (createItemDto.id) {
+      return await this.englishRepository.update(createItemDto.id, createItemDto)
+    } else {
+      return await this.englishRepository.save(createItemDto);
+    }
+  }
+
+  async delete(id: number) {
+    return await this.englishRepository.update(id, {
+      isDeleted: true,
+    });
   }
 
   async search(word: string) {
@@ -66,6 +91,15 @@ export class UserService {
     });
   }
 
+  async searchByLetter(letter: string) {
+    let r = await this.englishRepository.find({
+      where: {
+        isDeleted: false,
+      },
+    });
+    return r.filter(item => item.sourceText[0] === letter)
+  }
+
   async getAll() {
     // 根据 a-z开头，并且获取他们的数量
     let r = await this.englishRepository.find({
@@ -84,7 +118,7 @@ export class UserService {
       const firstLetter = item.sourceText[0];
       if (x[firstLetter]) {
         x[firstLetter].data.push(item);
-        x[firstLetter].count++; 
+        x[firstLetter].count++;
       }
     });
     return x;

@@ -4,6 +4,12 @@ import { IsStringAndNotEmpty } from "src/customDecorator";
 
 export class CreateItemDto {
   @ApiProperty({
+    description: "修改时需要的id",
+  })
+  @IsOptional()
+  id: number;
+
+  @ApiProperty({
     description: "源文本",
     example: "你好",
   })

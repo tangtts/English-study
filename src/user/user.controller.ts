@@ -24,7 +24,7 @@ export class UserController {
   @Inject()
   private configService: ConfigService<Config>;
 
-  @ApiOperation({ summary: "翻译" }) 
+  @ApiOperation({ summary: "翻译" })
   @ApiBody({ type: CreateItemDto })
   @PublicApi()
   @Post("translate")
@@ -34,10 +34,17 @@ export class UserController {
 
   @ApiOperation({ summary: "新增" })
   @ApiBody({ type: CreateItemDto })
-  @Post("add")
+  @Post("addOrUpdate")
   @PublicApi()
-  async add(@Body() createItemDto: CreateItemDto) {
-    return this.userService.add(createItemDto);
+  async addOrUpdate(@Body() createItemDto: CreateItemDto) {
+    return this.userService.addOrUpdate(createItemDto);
+  }
+
+  @ApiOperation({ summary: "删除" })
+  @Get("delete")
+  @PublicApi()
+  async delete(@Query("id", ParseIntPipe) id: number) {
+    return this.userService.delete(id);
   }
 
   @ApiOperation({ summary: "列表" })
@@ -52,13 +59,21 @@ export class UserController {
   @PublicApi()
   @Post("search")
   async get(@Body("word") word) {
+    if (!word) return [];
     return await this.userService.search(word);
+  }
+
+  @ApiOperation({ summary: "查询" })
+  @PublicApi()
+  @Get("searchByLetter")
+  async searchByLetter(@Query("letter") letter: string) {
+    return await this.userService.searchByLetter(letter);
   }
 
   @ApiOperation({ summary: "详情" })
   @PublicApi()
   @Get("detail")
-  async detail(@Query("id", ParseIntPipe) id) {
+  async detail(@Query("id", ParseIntPipe) id: number) {
     return await this.userService.detail(id);
   }
 
