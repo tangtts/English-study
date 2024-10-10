@@ -34,7 +34,7 @@ const schema = Joi.object({
   // 不能含有数字
   MYSQL_SERVER_DATABASE: Joi.string()
     .pattern(/\D{4,}/)
-    .default("accounting"),
+    .default("english"),
 });
 @Module({
   imports: [

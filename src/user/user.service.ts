@@ -14,8 +14,8 @@ import { SearchItemDto } from "./dto/SearchItem.dto";
 const TmtClient = tencentcloud.tmt.v20180321.Client;
 const clientConfig = {
   credential: {
-    secretId: process.env.TENCENTCLOUD_SECRETID,
-    secretKey: process.env.TENCENTCLOUD_SECRETKEY,
+    secretId: "AKIDGT3d3XhsAOjvtwqlkePxMYbYbYJGMZqA",
+    secretKey: "MZlniXJwQo4DHtQ7iGpT0gH0ZzFPNAkB",
   },
   region: "ap-beijing",
   profile: {
@@ -53,6 +53,15 @@ export class UserService {
     if (createItemDto.id) {
       return await this.englishRepository.update(createItemDto.id, createItemDto)
     } else {
+      // 判断是否存在同名
+      const exist = await this.englishRepository.findOne({
+        where: {
+          sourceText: createItemDto.sourceText,
+        },
+      });
+      if (exist) {
+        throw new HttpException("已存在", HttpStatus.BAD_REQUEST);
+      }
       return await this.englishRepository.save(createItemDto);
     }
   }
@@ -107,8 +116,13 @@ export class UserService {
         isDeleted: false,
       },
     });
+
     let x = {};
-    for (let i = 97; i < 123; i++) {
+    const aCharCode = 97;
+    const zCharCode = 122;
+    // 创建一个对象，用来存储每个字母的数据
+    // { a:[count:0,data:[]],b:[count:0,data:[] }
+    for (let i = aCharCode; i <= zCharCode; i++) {
       x[String.fromCharCode(i)] = {
         data: [],
         count: 0,
