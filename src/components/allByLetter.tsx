@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { alovaInstance } from "../api";
-import { DataItem } from ".";
+import { DataItem } from "./wordIndex";
 import { Button, Card, Col, Empty, List, Row, Spin, Tag } from "antd";
 import { useRequest } from "alova";
 

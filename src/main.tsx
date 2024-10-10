@@ -4,9 +4,10 @@ import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import { WordPage } from './components/wordPage.tsx';
-import { Index } from './components/index.tsx';
+import { WordIndex } from './components/wordIndex.tsx';
 import { ConfigProvider } from 'antd';
 import { AllByLetter } from './components/allByLetter';
+import { Index } from './components/index.tsx';
 
 const router = createBrowserRouter([
   {
@@ -15,7 +16,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Index />
+        element: <Index/>
+      },
+      {
+        path: "/wordIndex",
+        element: <WordIndex />
       },
       {
         path: "/letterPage",

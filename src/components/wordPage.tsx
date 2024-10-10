@@ -1,8 +1,8 @@
-import { Button, Card, Checkbox, Flex, Form, FormProps, Input, Modal, Space, message } from "antd";
+import { Button, Card, Flex, Form, FormProps, Input, Modal, Space, message } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { alovaInstance } from "../api";
-import { DataItem } from ".";
+import { DataItem } from "./wordIndex";
 import { useEffect, useState } from "react";
 
 type Add = Omit<DataItem, "id">
@@ -54,7 +54,7 @@ export const WordPage = () => {
         })
     }
     return (
-        <div>
+        <div className="w-full">
             {messageContextHolder}
             <Modal title="查询结果" open={isModalOpen}
                 cancelText="关闭" okText="确认"
