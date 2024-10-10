@@ -15,6 +15,7 @@ import { ConfigService } from "@nestjs/config";
 import { Config } from "../config/configType";
 import { TranslateItemDto } from "./dto/TranslateItem.dto";
 import { SearchItemDto } from "./dto/SearchItem.dto";
+import { SearchHistoryItemDto } from "./dto/search-history-item.dto";
 
 @ApiTags("模块")
 @Controller("/")
@@ -39,6 +40,27 @@ export class UserController {
   async addOrUpdate(@Body() createItemDto: CreateItemDto) {
     return this.userService.addOrUpdate(createItemDto);
   }
+
+
+  @ApiOperation({ summary: "查询历史列表" })
+  @Get("getSearchHistoryList")
+  @PublicApi()
+  async getSearchList() {
+    return this.userService.searchList();
+  }
+
+
+  
+  @ApiOperation({ summary: "设置历史列表" })
+  @Post("setSearchHistory")
+  @PublicApi()
+  async setSearch(@Body() searchHistoryItemDto: SearchHistoryItemDto) {
+    return this.userService.setSearchHistory(searchHistoryItemDto);
+  }
+
+  
+
+  
 
   @ApiOperation({ summary: "删除" })
   @Get("delete")

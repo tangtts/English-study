@@ -11,6 +11,8 @@ import { Config } from "../config/configType";
 import * as tencentcloud from "tencentcloud-sdk-nodejs-tmt";
 import { TranslateItemDto } from "./dto/TranslateItem.dto";
 import { SearchItemDto } from "./dto/SearchItem.dto";
+import { SearchItemEntity } from "./entities/searchItem.entity";
+import { SearchHistoryItemDto } from "./dto/search-history-item.dto";
 const TmtClient = tencentcloud.tmt.v20180321.Client;
 const clientConfig = {
   credential: {
@@ -27,16 +29,35 @@ const clientConfig = {
 
 @Injectable()
 export class UserService {
+
+
   // 使用写在这里就相当于 this 注入了
 
   @InjectRepository(EnglistItemEntity)
   private readonly englishRepository: Repository<EnglistItemEntity>;
-  @Inject()
-  private configService: ConfigService<Config>;
+
+  @InjectRepository(SearchItemEntity)
+  private readonly searchRepository: Repository<SearchItemEntity>;
 
   private client: any;
   constructor() {
     this.client = new TmtClient(clientConfig);
+  }
+
+  async searchList() {
+    return this.searchRepository.find({
+      where: {
+        isDeleted: false,
+      },
+    })
+  }
+
+  async setSearchHistory(searchHistoryItemDto: SearchHistoryItemDto) {
+    let searchHistoryItem = new SearchItemEntity;
+    searchHistoryItem.zhCh = searchHistoryItemDto.zhCh;
+    searchHistoryItem.en = searchHistoryItemDto.en;
+    // searchHistoryItem.createdTime = new Date();
+    return await this.searchRepository.save(searchHistoryItem);
   }
 
   async translate(translateItemDto: TranslateItemDto) {

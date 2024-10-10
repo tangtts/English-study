@@ -20,6 +20,7 @@ import { ResponseFormatInterceptorInterceptor } from "./interceptors/response-fo
 import configuration from "./config";
 import { Config } from "./config/configType";
 import { EnglistItemEntity } from "./user/entities/item.entity";
+import { SearchItemEntity } from "./user/entities/searchItem.entity";
 const schema = Joi.object({
   NODE_ENV: Joi.string()
     .valid("development", "production")
@@ -85,7 +86,7 @@ const schema = Joi.object({
           username: configService.get("MYSQL.USERNAME", { infer: true }),
           password: configService.get("MYSQL.PASSWORD", { infer: true }),
           database: configService.get("MYSQL.DATABASE", { infer: true }),
-          entities: [EnglistItemEntity],
+          entities: [EnglistItemEntity,SearchItemEntity],
           synchronize: true,
           logging: configService.get("MYSQL.LOG_ON", { infer: true }),
           connectorPackage: "mysql2",

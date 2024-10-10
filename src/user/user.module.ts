@@ -4,9 +4,10 @@ import { UserService } from "./user.service";
 import { UserController } from "./user.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { EnglistItemEntity } from './entities/item.entity';
+import { SearchItemEntity } from './entities/searchItem.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([EnglistItemEntity])],
+  imports: [TypeOrmModule.forFeature([EnglistItemEntity,SearchItemEntity])],
   controllers: [UserController],
   providers: [UserService],
   exports:[UserService],
