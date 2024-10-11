@@ -9,7 +9,6 @@ import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { RedisModule } from "./redis/redis.module";
 import { JwtModule } from "@nestjs/jwt";
 import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { AuthGuard } from "./auth.guard";
@@ -21,6 +20,7 @@ import configuration from "./config";
 import { Config } from "./config/configType";
 import { EnglistItemEntity } from "./user/entities/item.entity";
 import { SearchItemEntity } from "./user/entities/searchItem.entity";
+import { ExampleEntity } from "./wordbook/entities/example.entity";
 const schema = Joi.object({
   NODE_ENV: Joi.string()
     .valid("development", "production")
@@ -86,7 +86,7 @@ const schema = Joi.object({
           username: configService.get("MYSQL.USERNAME", { infer: true }),
           password: configService.get("MYSQL.PASSWORD", { infer: true }),
           database: configService.get("MYSQL.DATABASE", { infer: true }),
-          entities: [EnglistItemEntity,SearchItemEntity],
+          entities: [EnglistItemEntity,SearchItemEntity,ExampleEntity],
           synchronize: true,
           logging: configService.get("MYSQL.LOG_ON", { infer: true }),
           connectorPackage: "mysql2",

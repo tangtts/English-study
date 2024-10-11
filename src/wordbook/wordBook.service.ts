@@ -1,18 +1,17 @@
 import { RedisService } from "./../redis/redis.service";
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { CreateItemDto } from "./dto/CreateItem.dto";
+import { CreateWordDto } from "./dto/CreateItem.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EnglistItemEntity } from "./entities/item.entity";
+import { wordBookEntity } from "./entities/wordBook.entity";
 import { Like, Repository } from "typeorm";
-import { encryptByMD5 } from "src/utils";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { Config } from "../config/configType";
 import * as tencentcloud from "tencentcloud-sdk-nodejs-tmt";
 import { TranslateItemDto } from "./dto/TranslateItem.dto";
 import { SearchItemDto } from "./dto/SearchItem.dto";
-import { SearchItemEntity } from "./entities/searchItem.entity";
 import { SearchHistoryItemDto } from "./dto/search-history-item.dto";
+import { ExampleEntity } from './entities/example.entity';
 const TmtClient = tencentcloud.tmt.v20180321.Client;
 const clientConfig = {
   credential: {
@@ -30,14 +29,11 @@ const clientConfig = {
 @Injectable()
 export class UserService {
 
+  @InjectRepository(wordBookEntity)
+  private readonly englishRepository: Repository<wordBookEntity>;
 
-  // 使用写在这里就相当于 this 注入了
-
-  @InjectRepository(EnglistItemEntity)
-  private readonly englishRepository: Repository<EnglistItemEntity>;
-
-  @InjectRepository(SearchItemEntity)
-  private readonly searchRepository: Repository<SearchItemEntity>;
+  @InjectRepository(ExampleEntity)
+  private readonly exampleRepository: Repository<ExampleEntity>;
 
   private client: any;
   constructor() {
@@ -66,6 +62,7 @@ export class UserService {
     return await this.searchRepository.save(searchHistoryItem);
   }
 
+  // 翻译文本，暂时只支持英文到中文
   async translate(translateItemDto: TranslateItemDto) {
     let r1 = await this.client.TextTranslate({
       SourceText: translateItemDto.sourceText,
@@ -76,9 +73,22 @@ export class UserService {
     return r1.TargetText;
   }
 
-  async addOrUpdate(createItemDto: CreateItemDto) {
+  async addOrUpdate(createItemDto: CreateWordDto) {
+    // 说明是更新
     if (createItemDto.id) {
-      return await this.englishRepository.update(createItemDto.id, createItemDto)
+      // 更新其他字段
+      await this.englishRepository.update(createItemDto.id, createItemDto)
+      // 删除所有例子
+      await this.exampleRepository.delete({
+        wordId: createItemDto.id
+      });
+      // 添加例子
+      createItemDto.examples.forEach(item => {
+        let example = new ExampleEntity;
+        example.content = item;
+        example.wordId = createItemDto.id;
+        this.exampleRepository.save(example);
+      });
     } else {
       // 判断是否存在同名
       const exist = await this.englishRepository.findOne({
@@ -89,6 +99,13 @@ export class UserService {
       if (exist) {
         throw new HttpException("已存在", HttpStatus.BAD_REQUEST);
       }
+      // 进行关联
+      createItemDto.examples.forEach(item => {
+        let example = new ExampleEntity;
+        example.content = item;
+        example.wordId = createItemDto.id;
+        this.exampleRepository.save(example);
+      });
       return await this.englishRepository.save(createItemDto);
     }
   }
