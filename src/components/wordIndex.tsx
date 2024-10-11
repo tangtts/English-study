@@ -2,8 +2,9 @@ import { Button, Flex, Input, Card, Tag, Row, Col, Badge, Empty } from 'antd';
 import { Link } from 'react-router-dom';
 import { alovaInstance } from '../api';
 import { useRequest, useWatcher } from 'alova';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { WordPage } from './wordPage';
+import { debounce } from 'lodash-es';
 
 interface a2z {
   [key: string]: {
@@ -20,43 +21,42 @@ export interface DataItem {
   examples: string[]
 }
 
-// 搜索联想
-const search = (word: string) => {
-  return alovaInstance.Post<DataItem[]>(`/search`, {
-    word
-  });
-};
-const getAllLetter = alovaInstance.Get('/all');
-export const WordIndex: React.FC = () => {
-  let a2zData: a2z = {};
-  const { data } = useRequest(getAllLetter, {
-    hitSource: 'all',
-    initialData: {}
-  })
-  a2zData = data as a2z;
 
-  const [word, setWord] = useState('');
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setWord(e.target.value);
+
+export const WordIndex: React.FC = () => {
+  const [a2zListData, setA2zListData] = useState<a2z>({});
+  const getAllSearchHistory = () => {
+    alovaInstance.Get<a2z>(`/all`).then(res => {
+      setA2zListData(res)
+    })
   }
 
-  const {
-    data: searchData = [],
-  } = useWatcher(
-    () => search(word),
-    [word],
-    {
-      debounce: 500
-    }
-  );
+  useEffect(getAllSearchHistory, [])
+
+
+  const [word, setWord] = useState('');
+  const [searchData, setSearchData] = useState<DataItem[]>([]);
+
+  const search = (word: string) => {
+    return alovaInstance.Post<DataItem[]>(`/search`, {
+      word
+    }).then(res => {
+      setSearchData(res)
+    })
+  }
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setWord(e.target.value)
+    return search(e.target.value)
+  }
+
   return (
     <Flex vertical gap="middle">
       <Flex gap="small" align='center'>
-        <Input size='large' placeholder="搜索" defaultValue={word} onChange={onChange} />
+        <Input size='large' placeholder="搜索历史记录" onChange={debounce(onChange, 500)} />
         <Button size='large' type="primary" onClick={() => search(word)}>搜索</Button>
       </Flex>
 
-      <Card title="搜索联想">
+      <Card title="历史记录联想">
         <Row gutter={[6, 8]}>
           {
             searchData.length ?
@@ -84,12 +84,12 @@ export const WordIndex: React.FC = () => {
         </Row>
       </Card>
       <Card title="A-Z">
-        <Row justify="center" gutter={[24, 20]} >
+        <Row justify="center" gutter={[20, 10]} >
           {
-            Object.keys(a2zData).map(key => {
+            Object.keys(a2zListData).map(key => {
               return (
                 <Col span={5} key={key}>
-                  <Badge count={a2zData[key].count} >
+                  <Badge count={a2zListData[key].count} >
                     <Link to={`/letterPage?letter=${key}`}>
                       <Button size='large' className='w-20 mx-auto'>
                         {key}

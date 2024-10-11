@@ -1,4 +1,4 @@
-import { Button, Card, Flex, Form, FormProps, Input, Modal, Space, message } from "antd";
+import { Button, Card, Flex, Form, FormProps, Input, Modal, Space, Tooltip, message } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { alovaInstance } from "../api";
@@ -8,9 +8,7 @@ import { useEffect, useState } from "react";
 type Add = Omit<DataItem, "id">
 
 const addOrUpdate = (data: Add) => {
-    return alovaInstance.Post(`/addOrUpdate`, data, {
-        name: "all"
-    });
+    return alovaInstance.Post(`/addOrUpdate`, data);
 };
 
 export const WordPage = () => {
@@ -21,7 +19,9 @@ export const WordPage = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate()
 
+    // 获取详情 id
     const id = searchParams.get("id");
+
     useEffect(() => {
         if (id) {
             alovaInstance.Get<DataItem>(`/detail?id=${id}`).then(data => {
@@ -56,12 +56,18 @@ export const WordPage = () => {
     return (
         <div className="w-full">
             {messageContextHolder}
+
             <Modal title="查询结果" open={isModalOpen}
                 cancelText="关闭" okText="确认"
                 onOk={() => setIsModalOpen(false)} onCancel={() => setIsModalOpen(false)}>
                 <p>{translate}</p>
             </Modal>
-            <Card title={id ? "更新" : "新增"} extra={<Button type="primary" onClick={onSearch}> 查询 </Button>}>
+
+            <Card title={id ? "更新" : "新增"} extra={
+                <Tooltip placement="top" title={"可以点击查询获取中文翻译"}>
+                    <Button type="primary" onClick={onSearch}> 查询 </Button>
+                </Tooltip>
+            }>
                 <Form
                     form={form}
                     labelCol={{ span: 4 }}

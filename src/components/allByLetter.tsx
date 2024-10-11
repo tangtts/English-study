@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { alovaInstance } from "../api";
 import { DataItem } from "./wordIndex";
-import { Button, Card, Col, Empty, List, Row, Spin, Tag } from "antd";
-import { useRequest } from "alova";
+import { Button, Card, Col, Empty, List, Row, Spin, Tag, Typography } from "antd";
 
 export const AllByLetter = () => {
 
@@ -38,7 +37,6 @@ export const AllByLetter = () => {
                     actions={
                       [
                         <Link to={`/wordPage?id=${item.id}`}>
-
                           <Button size="small" type="link" key="list-loadmore-more">
                             详情
                           </Button>
@@ -51,9 +49,8 @@ export const AllByLetter = () => {
                           }}
                         >删除</Button>]}>
                     <List.Item.Meta
-                      title={item.sourceText}
+                      title={ item.sourceText+ " / " + item.transformText}
                     />
-                    <div>{item.transformText}</div>
                   </List.Item>
                 )
               }
@@ -62,7 +59,6 @@ export const AllByLetter = () => {
             : <Empty
               description="暂无数据"
               className='mx-auto'
-              image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
               imageStyle={{ height: 80 }}
             >
               <Button type="primary" size="large">
