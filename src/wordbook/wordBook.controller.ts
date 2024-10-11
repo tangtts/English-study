@@ -7,15 +7,12 @@ import {
   Query,
   ParseIntPipe,
 } from "@nestjs/common";
-import { UserService as WordBookService } from "./wordBook.service";
+import { WordBookService } from "./wordBook.service";
 import { CreateWordDto } from "./dto/CreateItem.dto";
 import { PublicApi, RequireLogin, UserInfo } from "src/customDecorator";
 import { ApiBody, ApiOperation, ApiProperty, ApiTags } from "@nestjs/swagger";
-import { ConfigService } from "@nestjs/config";
-import { Config } from "../config/configType";
 import { TranslateItemDto } from "./dto/TranslateItem.dto";
 import { SearchItemDto } from "./dto/SearchItem.dto";
-import { SearchHistoryItemDto } from "./dto/search-history-item.dto";
 
 @ApiTags("单词本模块")
 @Controller("/wordbook")
@@ -44,33 +41,6 @@ export class WordBookController {
   }
 
 
-  @ApiOperation({ summary: "查询历史列表" })
-  @Get("getSearchHistoryList")
-  @PublicApi()
-  async getSearchList() {
-    return this.wordBookService.searchList();
-  }
-
-
-  @ApiOperation({ summary: "删除历史项" })
-  @Post("delSearchHistoryItem")
-  @PublicApi()
-  async delSearchHistoryItem(@Body("id") id: number) {
-    return this.wordBookService.delSearchHistoryItem(id);
-  }
-
-
-  @ApiOperation({ summary: "设置历史列表" })
-  @Post("setSearchHistory")
-  @PublicApi()
-  async setSearch(@Body() searchHistoryItemDto: SearchHistoryItemDto) {
-    return this.wordBookService.setSearchHistory(searchHistoryItemDto);
-  }
-
-
-
-
-
   @ApiOperation({ summary: "删除" })
   @Get("delete")
   @PublicApi()
@@ -86,7 +56,7 @@ export class WordBookController {
     return this.wordBookService.getListBySearch(searchItemDto);
   }
 
-  @ApiOperation({ summary: "查询" })
+  @ApiOperation({ summary: "根据词查询" })
   @PublicApi()
   @Post("search")
   async get(@Body("word") word) {
@@ -94,14 +64,14 @@ export class WordBookController {
     return await this.wordBookService.search(word);
   }
 
-  @ApiOperation({ summary: "查询" })
+  @ApiOperation({ summary: "根据首字母查询" })
   @PublicApi()
   @Get("searchByLetter")
   async searchByLetter(@Query("letter") letter: string) {
     return await this.wordBookService.searchByLetter(letter);
   }
 
-  @ApiOperation({ summary: "详情" })
+  @ApiOperation({ summary: "根据单词获取详情" })
   @PublicApi()
   @Get("detail")
   async detail(@Query("id", ParseIntPipe) id: number) {
@@ -110,8 +80,8 @@ export class WordBookController {
 
   @ApiOperation({ summary: "全部a-z" })
   @PublicApi()
-  @Get("all")
-  async all() {
-    return await this.wordBookService.getAll();
+  @Get("allLetter")
+  async allLetter() {
+    return await this.wordBookService.getAllLetter();
   }
 }

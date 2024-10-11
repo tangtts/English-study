@@ -18,6 +18,7 @@ export default () => {
   }, mergedConfig)
   return mergedConfig
 }
+  console.log("🚀 ~ mergedConfig:", mergedConfig);
 
 function loadYamlFile(file: string) {
   return fs.readFileSync(join(__dirname, file), 'utf-8');

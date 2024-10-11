@@ -2,13 +2,8 @@
 
 interface NestConfig {
   PORT:number
-}
-
-interface OSSConfig {
-  ACCESS_KEY_ID:string
-  ACCESS_KEY_SECRET:string
-  BUCKET:string
-  DIR:string
+  TENCENTCLOUD_SECRETID: string
+  TENCENTCLOUD_SECRETKEY: string
 }
 
 interface MysqlConfig {
@@ -40,10 +35,15 @@ interface LogConfig {
 }
 
 export interface Config {
-  NSET:NestConfig;
+  NEST:NestConfig;
   MYSQL: MysqlConfig;
   REDIS: RedisConfig;
   JWT: JwtConfig;
   LOG: LogConfig;
   SWAGGER_ENABLE: boolean;
+
+  TENCENT_CLOUD: {
+    SECRET_ID: string;
+    SECRET_KEY: string;
+  };
 }

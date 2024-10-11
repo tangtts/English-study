@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { ExampleEntity } from "./example.entity";
 
 // 单词本
 @Entity("wordbook")

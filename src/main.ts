@@ -14,8 +14,8 @@ async function bootstrap() {
   setupApp(app, configService);
 
   // 默认是 static 目录,可以修改为 my-uploads
-  console.log(configService.get("NSET.PORT", { infer: true }));
-  await app.listen(configService.get("NSET.PORT", { infer: true }));
+  console.log(configService.get("NEST.PORT", { infer: true }));
+  await app.listen(configService.get("NEST.PORT", { infer: true }));
 }
 
 bootstrap();

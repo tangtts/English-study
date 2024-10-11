@@ -16,7 +16,7 @@ import { Request } from 'express';
 export class ResponseFormatInterceptorInterceptor implements NestInterceptor {
   constructor(
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-  ) {}
+  ) { }
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const response = context.switchToHttp().getResponse<Response>();
     const statusCode = response.statusCode;
