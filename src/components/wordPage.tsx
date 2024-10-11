@@ -5,10 +5,10 @@ import { alovaInstance } from "../api";
 import { DataItem } from "./wordIndex";
 import { useEffect, useState } from "react";
 
-type Add = Omit<DataItem, "id">
+type Add = Omit<DataItem, "id"> & Partial<Pick<DataItem, "id">>
 
 const addOrUpdate = (data: Add) => {
-    return alovaInstance.Post(`/addOrUpdate`, data);
+    return alovaInstance.Post(`/wordbook/addOrUpdate`, data);
 };
 
 export const WordPage = () => {
@@ -24,7 +24,7 @@ export const WordPage = () => {
 
     useEffect(() => {
         if (id) {
-            alovaInstance.Get<DataItem>(`/detail?id=${id}`).then(data => {
+            alovaInstance.Get<DataItem>(`/wordbook/detail?id=${id}`).then(data => {
                 form.setFieldsValue({
                     sourceText: data.sourceText,
                     transformText: data.transformText,
@@ -37,7 +37,11 @@ export const WordPage = () => {
     }, [])
 
     const onFinish: FormProps<Add>['onFinish'] = (values) => {
-        addOrUpdate(values).then(() => {
+        let o = values;
+        if (id) {
+            o.id = Number(id)
+        }
+        addOrUpdate(o).then(() => {
             messageApi.success("添加成功");
             navigate("/");
         })
@@ -46,7 +50,7 @@ export const WordPage = () => {
     const onSearch = () => {
         const sourceText = form.getFieldValue("sourceText");
         if (!sourceText) return messageApi.warning("请输入英文");
-        alovaInstance.Post<string>(`/translate`, {
+        alovaInstance.Post<string>(`/wordbook/translate`, {
             sourceText
         }).then(res => {
             setIsModalOpen(true);
@@ -90,13 +94,6 @@ export const WordPage = () => {
                         label="中文"
                         name="transformText"
                         rules={[{ required: true, message: '请输入中文翻译!' }]}
-                    >
-                        <Input className="h-12" />
-                    </Form.Item>
-
-                    <Form.Item<Add>
-                        label="来源"
-                        name="sourceOrigin"
                     >
                         <Input className="h-12" />
                     </Form.Item>

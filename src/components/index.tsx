@@ -19,16 +19,13 @@ export const Index = () => {
   const onChangeChinese = (e: any) => {
     translate(e.target.value, "zh", "en").then(res => {
       setEnglish(res)
-      alovaInstance.Post(`/setSearchHistory`, {
-        en: res,
-        zhCh: e.target.value
-      }).then(getAllSearchHistory);
+      getAllSearchHistory()
     })
   };
 
   
   const getAllSearchHistory = () => {
-    alovaInstance.Get<HistoryItem[]>(`/getSearchHistoryList`).then(res => {
+    alovaInstance.Get<HistoryItem[]>(`/searchHistory/list`).then(res => {
       setSearchHistoryListData(res)
     })
   }
@@ -38,7 +35,7 @@ export const Index = () => {
   }, [])
 
   const translate = (sourceText: string, sourceLanguage: "zh" | "en", target: "zh" | "en") => {
-    return alovaInstance.Post<string>(`/translate`, {
+    return alovaInstance.Post<string>(`/wordbook/translate`, {
       sourceText,
       sourceLanguage,
       target,
@@ -60,7 +57,7 @@ export const Index = () => {
 
 
   function deleteItem(item: HistoryItem) {
-    alovaInstance.Post<string>(`/delSearchHistoryItem`, {
+    alovaInstance.Post<string>(`/searchHistory/del`, {
       id: item.id
     }).then(getAllSearchHistory)
   }

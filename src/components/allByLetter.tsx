@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { alovaInstance } from "../api";
 import { DataItem } from "./wordIndex";
-import { Button, Card, Col, Empty, List, Row, Spin, Tag, Typography } from "antd";
+import { Button, Card, Empty, List,  Spin } from "antd";
 
 export const AllByLetter = () => {
 
@@ -13,7 +13,7 @@ export const AllByLetter = () => {
   const [searchData, setSearchData] = useState<DataItem[]>([]);
   const searchByLetter = () => {
     setLoading(true);
-    alovaInstance.Get<DataItem[]>(`/searchByLetter?letter=${letter}`
+    alovaInstance.Get<DataItem[]>(`/wordbook/searchByLetter?letter=${letter}`
     ).then(res => {
       setSearchData(res);
       setLoading(false);
@@ -37,11 +37,11 @@ export const AllByLetter = () => {
                     actions={
                       [
                         <Link to={`/wordPage?id=${item.id}`}>
-                          <Button size="small" type="link" key="list-loadmore-more">
+                          <Button size="small" type="link">
                             详情
                           </Button>
                         </Link>,
-                        <Button danger size="small" type="text" key="list-loadmore-more"
+                        <Button danger size="small" type="text"
                           onClick={() => {
                             alovaInstance.Get<DataItem[]>(`/delete?id=${item.id}`).then(() => {
                               searchByLetter()

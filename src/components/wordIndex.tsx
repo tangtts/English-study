@@ -26,7 +26,7 @@ export interface DataItem {
 export const WordIndex: React.FC = () => {
   const [a2zListData, setA2zListData] = useState<a2z>({});
   const getAllSearchHistory = () => {
-    alovaInstance.Get<a2z>(`/all`).then(res => {
+    alovaInstance.Get<a2z>(`/wordbook/allLetter`).then(res => {
       setA2zListData(res)
     })
   }
@@ -38,7 +38,7 @@ export const WordIndex: React.FC = () => {
   const [searchData, setSearchData] = useState<DataItem[]>([]);
 
   const search = (word: string) => {
-    return alovaInstance.Post<DataItem[]>(`/search`, {
+    return alovaInstance.Post<DataItem[]>(`/wordbook/search`, {
       word
     }).then(res => {
       setSearchData(res)
