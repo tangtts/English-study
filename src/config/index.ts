@@ -12,7 +12,7 @@ let mergedConfig: Record<string, any> = {};
 
 
 export default () => {
-  const configs = ['./default.yaml', `./${configFileNameObj[env]}.yaml`];
+  const configs = ['./default.yaml', `./dev.yaml`];
   configs.reduce((prev, cur) => {
     return Object.assign(prev, yaml.load(loadYamlFile(cur)))
   }, mergedConfig)

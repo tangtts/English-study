@@ -6,7 +6,6 @@ services:
       dockerfile: ./Dockerfile
     depends_on:
       - mysql-container
-      - redis-container
     ports:
       - 3005:3005
     networks:
@@ -14,16 +13,10 @@ services:
   mysql-container:
     image: mysql
     volumes:
-      - /Tsk/accounting/mysql-data:/var/lib/mysql
+      - /Tsk/english/mysql-data:/var/lib/mysql
     environment:
-      MYSQL_DATABASE: accounting
+      MYSQL_DATABASE: english
       MYSQL_ROOT_PASSWORD: 1413qqgmtskABC
-    networks:
-      - common-network
-  redis-container:
-    image: redis
-    volumes:
-      - /Tsk/accounting/redis-data:/data
     networks:
       - common-network
 networks:
