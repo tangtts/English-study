@@ -57,7 +57,7 @@ import { SearchItemEntity } from "./searchHistory/entities/searchItem.entity";
           password: configService.get("MYSQL.PASSWORD", { infer: true }),
           database: configService.get("MYSQL.DATABASE", { infer: true }),
           entities: [SearchItemEntity,ExampleEntity,wordBookEntity],
-          synchronize: true,
+          synchronize: false,
           logging: configService.get("MYSQL.LOG_ON", { infer: true }),
           connectorPackage: "mysql2",
         };

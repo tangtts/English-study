@@ -4,7 +4,7 @@ MYSQL:
   PORT: 3306
   HOST: mysql-container
   USERNAME: root
-  PASSWORD: "123456"
+  PASSWORD: 1413qqgmtskABC
   LOG_ON: false
 JWT:
   SECRET: tang
